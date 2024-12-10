@@ -13,13 +13,15 @@ export default function SearchBar() {
     searchResults,
     isLoading,
     error,
+    setError,
   } = useSearch();
   const handleSubmit = () => {
     setSearchQuery("");
     setSearchResults([]);
+    setError(null);
   };
   return (
-    <div className="flex ">
+    <div className="flex  ">
       <Button
         onClick={handleSubmit}
         className="border border-gray-500 text-gray-300 bg-black-100 rounded-lg mx-2 hover:bg-gray-500"
@@ -36,9 +38,13 @@ export default function SearchBar() {
             placeholder="Search..."
             className="border-gray-500 min-w-72 relative pl-8"
           />
+          {error && (
+            <p className="text-red-500 absolute z-10 p-1 px-2 w-full border rounded-lg border-red-600 ">
+              {error}
+            </p>
+          )}
         </div>
         {/* {isLoading && <p>Loading...</p>} */}
-        {error && <p className="text-red-500 z-10 relative">{error}</p>}
 
         {searchResults.length > 0 && (
           <div className="absolute top-full mt-2 bg-gray-800 text-white rounded shadow-lg z-10 w-full ">

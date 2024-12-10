@@ -76,5 +76,6 @@ export function useSearch() {
     searchResults,
     isLoading,
     error,
+    setError,
   };
 }
