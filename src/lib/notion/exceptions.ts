@@ -5,6 +5,7 @@ export enum NotionErrorCode {
   RATE_LIMITED = "RATE_LIMITED",
   INTERNAL_ERROR = "INTERNAL_ERROR",
   INTERNAL_RESPONSE = "INTERNAL_RESPONSE",
+  INVALID_RESPONSE = "INVALID_RESPONSE"
 }
 
 export class NotionError extends Error {
