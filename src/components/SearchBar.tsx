@@ -27,13 +27,16 @@ export default function SearchBar() {
         Clear
       </Button>
       <div className="relative flex flex-col items-center">
-        <Input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search..."
-          className="border-gray-500 min-w-72 relative "
-        />
+        <div>
+          <MagnifyingGlassIcon className=" absolute size-5 mx-2 mt-2 text-gray-500" />
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search..."
+            className="border-gray-500 min-w-72 relative pl-8"
+          />
+        </div>
         {/* {isLoading && <p>Loading...</p>} */}
         {error && <p className="text-red-500 z-10 relative">{error}</p>}
 
@@ -54,7 +57,6 @@ export default function SearchBar() {
           </div>
         )}
       </div>
-      <MagnifyingGlassIcon className="size-8 mx-1 text-gray-300" />
     </div>
   );
 }
