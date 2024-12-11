@@ -16,7 +16,7 @@ const multiSelectOptionSchema = z.object({
   color: z.string(),
 });
 
-const titleTextSchema = z.object({
+const textSchema = z.object({
   type: z.string(),
   text: z
     .object({
@@ -78,7 +78,12 @@ const pagePropertiesSchema = z.object({
   Page: z.object({
     id: z.literal("title"),
     type: z.literal("title"),
-    title: z.array(titleTextSchema),
+    title: z.array(textSchema),
+  }),
+  Description: z.object({
+    id: z.string(),
+    type: z.literal("rich_text"),
+    rich_text: z.array(textSchema),
   }),
   Owner: z.object({
     id: z.string(),

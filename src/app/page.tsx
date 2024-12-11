@@ -1,8 +1,16 @@
-import { getNotionPages } from "@/lib/notion/notion";
+import { getArticles } from "@/lib/notion/notion";
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default async function Home() {
-  const posts = await getNotionPages({ pageSize: 10 });
+  const articles = await getArticles({ pageSize: 10 });
 
   return (
     <div className="min-h-screen p-2 pb-20 gap-16 sm:p-10 font-[family-name:var(--font-geist-sans)]">
@@ -11,19 +19,24 @@ export default async function Home() {
           Франция | Гайд по иммиграции и интеграции
         </h1>
 
-        <div className="space-y-4">
-          {posts.map((post) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => (
             <Link
-              key={post.id}
-              href={`/posts/${post.properties.URL.url}`}
-              className="block p-6 border rounded hover:bg-gray-50"
+              key={article.id}
+              href={`/posts/${article.slug}`}
+              className="block hover:no-underline"
             >
-              <h2 className="text-xl font-semibold">
-                {post.properties.Page.title[0].plain_text}
-              </h2>
-              <p className="text-gray-600 mt-2">
-                {new Date(post.created_time).toLocaleDateString()}
-              </p>
+              <Card className="transition-border hover:shadow-md">
+                <CardHeader>
+                  <CardTitle>{article.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{article.description}</CardDescription>
+                </CardContent>
+                <CardFooter>
+                  {new Date(article.publishedAt).toLocaleDateString()}
+                </CardFooter>
+              </Card>
             </Link>
           ))}
         </div>
