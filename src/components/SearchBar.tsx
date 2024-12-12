@@ -1,6 +1,6 @@
 "use client";
 import { useSearch } from "../hooks/useSearch";
-///styles components
+
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -15,11 +15,13 @@ export default function SearchBar() {
     error,
     setError,
   } = useSearch();
+
   const handleSubmit = () => {
     setSearchQuery("");
     setSearchResults([]);
     setError(null);
   };
+
   return (
     <div className="flex  ">
       <Button
@@ -29,8 +31,12 @@ export default function SearchBar() {
         Clear
       </Button>
       <div className="relative flex flex-col items-center">
-        <div>
-          <MagnifyingGlassIcon className=" absolute size-5 mx-2 mt-2 text-gray-500" />
+        <div className="flex items-center justify-between ">
+          {isLoading ? (
+            <div className="absolute mx-2 w-4 h-4 border-3 border-t-2 border-gray-500 rounded-full animate-spin"></div>
+          ) : (
+            <MagnifyingGlassIcon className="absolute size-5 mx-2 text-gray-500" />
+          )}
           <Input
             type="text"
             value={searchQuery}
@@ -44,7 +50,6 @@ export default function SearchBar() {
             </p>
           )}
         </div>
-        {/* {isLoading && <p>Loading...</p>} */}
 
         {searchResults.length > 0 && (
           <div className="absolute top-full mt-2 bg-gray-800 text-white rounded shadow-lg z-10 w-full ">

@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { searchResultSchema } from "@/schemas/searchSchema";
+import { useDebounce } from "./useDebounce";
 import { z } from "zod";
 import { documentSchema } from "@/schemas/searchSchema";
 
@@ -11,7 +12,15 @@ export function useSearch() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const performSearch = async () => {
+  const debouncedQuery = useDebounce(searchQuery, 500);
+
+  const previousQuery = useRef(debouncedQuery);
+
+  const performSearch = async (query: string) => {
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -33,17 +42,14 @@ export function useSearch() {
       );
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+        throw new Error(`No results found for "${searchQuery}"`);
       }
-
       const data = await response.json();
-      console.log(data);
-      const validatedData = searchResultSchema.parse(data);
-
-      const results = validatedData.documents.map((doc) => ({
+      const results = searchResultSchema.parse(data).documents.map((doc) => ({
         semantic_identifier: doc.semantic_identifier || "Untitled",
         link: doc.link,
       }));
+
       setSearchResults(results);
     } catch (err: any) {
       if (err instanceof z.ZodError) {
@@ -56,18 +62,10 @@ export function useSearch() {
     }
   };
 
-  useEffect(() => {
-    if (!searchQuery) {
-      setSearchResults([]);
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      performSearch();
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  if (debouncedQuery !== previousQuery.current) {
+    previousQuery.current = debouncedQuery;
+    performSearch(debouncedQuery);
+  }
 
   return {
     searchQuery,
