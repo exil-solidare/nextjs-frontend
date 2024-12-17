@@ -2,7 +2,7 @@ import React from "react";
 
 import SearchBar from "./SearchBar";
 
-export default function Header() {
+const Header = () => {
   return (
     <>
       <div className="items-center flex justify-end">
@@ -10,4 +10,5 @@ export default function Header() {
       </div>
     </>
   );
-}
+};
+export default Header;

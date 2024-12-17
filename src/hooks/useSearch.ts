@@ -2,17 +2,20 @@ import { useState, useRef } from "react";
 import { searchResultSchema } from "@/schemas/searchSchema";
 import { useDebounce } from "./useDebounce";
 import { z } from "zod";
-import { documentSchema } from "@/schemas/searchSchema";
+import { Document } from "@/schemas/searchSchema";
+import { mapDocuments } from "../helpers/mapDocuments";
 
-type SearchResult = z.infer<typeof documentSchema>;
+import fetchDanswerData from "@/services/danswerService";
+
+const DEBOUNCE_DELAY = 500;
 
 export function useSearch() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const debouncedQuery = useDebounce(searchQuery, 500);
+  const debouncedQuery = useDebounce(searchQuery, DEBOUNCE_DELAY);
 
   const previousQuery = useRef(debouncedQuery);
 
@@ -25,41 +28,32 @@ export function useSearch() {
     setError(null);
 
     try {
-      const response = await fetch(
-        "https://danswer.exil-solidaire.fr/api/query/simple-search",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: searchQuery,
-            filters: {
-              source_type: null,
-              document_set: null,
-              time_cutoff: null,
-            },
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`No results found for "${searchQuery}"`);
-      }
-      const data = await response.json();
-      const results = searchResultSchema.parse(data).documents.map((doc) => ({
-        semantic_identifier: doc.semantic_identifier || "Untitled",
-        link: doc.link,
-      }));
+      const data = await fetchDanswerData(debouncedQuery);
+      const parcedResults = searchResultSchema.parse(data);
+      const results = mapDocuments(parcedResults);
 
       setSearchResults(results);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof z.ZodError) {
         setError("Invalid data structure from API");
-      } else {
+      } else if (err instanceof Error) {
         setError(err.message || "Something went wrong");
+      } else {
+        setError("An unknown error occurred");
       }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onClear = () => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setError(null);
+  };
+
+  const onQueryChange = (newQuery: string) => {
+    setSearchQuery(newQuery);
   };
 
   if (debouncedQuery !== previousQuery.current) {
@@ -69,11 +63,10 @@ export function useSearch() {
 
   return {
     searchQuery,
-    setSearchQuery,
-    setSearchResults,
     searchResults,
     isLoading,
     error,
-    setError,
+    onClear,
+    onQueryChange,
   };
 }

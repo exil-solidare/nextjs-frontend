@@ -5,21 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-export default function SearchBar() {
+export const SearchBar = () => {
   const {
     searchQuery,
-    setSearchQuery,
-    setSearchResults,
     searchResults,
     isLoading,
     error,
-    setError,
+    onClear,
+    onQueryChange,
   } = useSearch();
 
   const handleSubmit = () => {
-    setSearchQuery("");
-    setSearchResults([]);
-    setError(null);
+    onClear();
   };
 
   return (
@@ -40,7 +37,7 @@ export default function SearchBar() {
           <Input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search..."
             className="border-gray-500 min-w-72 relative pl-8"
           />
@@ -70,4 +67,5 @@ export default function SearchBar() {
       </div>
     </div>
   );
-}
+};
+export default SearchBar;
