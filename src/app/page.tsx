@@ -1,17 +1,17 @@
-import { getNotionPages } from "@/lib/notion/notion";
+// import { getNotionPages } from "@/lib/notion/notion";
 import Link from "next/link";
+import Header from "../components/Header";
 
 export default async function Home() {
-  const posts = await getNotionPages({ pageSize: 10 });
-
   return (
-    <div className="min-h-screen p-2 pb-20 gap-16 sm:p-10 font-[family-name:var(--font-geist-sans)]">
+    <div className="  min-h-screen p-2 pb-20 gap-16 sm:p-10 font-[family-name:var(--font-geist-sans)]">
+      <Header />
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        <h1 className=" static py-4 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           Франция | Гайд по иммиграции и интеграции
         </h1>
 
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           {posts.map((post) => (
             <Link
               key={post.id}
@@ -26,7 +26,7 @@ export default async function Home() {
               </p>
             </Link>
           ))}
-        </div>
+        </div> */}
       </main>
     </div>
   );
